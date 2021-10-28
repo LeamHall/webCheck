@@ -36,16 +36,6 @@ var file = flag.String("f", "-", "File to read")
 // trigger var is the string to search the response.Body for.
 var trigger string
 
-// init sets up the flag.StringVar results.
-func init() {
-	const (
-		defaultString	= "Domici"
-		usageTrigger	= "pattern to search for"
-	)
-	flag.StringVar(&trigger, "trigger", defaultString, usageTrigger)
-	flag.StringVar(&trigger, "t", "Guido", usageTrigger+" short version")
-}
-
 // hasString returns a bool, is the term string in the response body?
 func hasString(rb []byte, term string) bool {
 	b := string(rb[:len(rb)])
@@ -65,6 +55,13 @@ func lines(file *os.File) (lines []string) {
 }
 
 func main() {
+	const (
+		defaultString	= "Domici"
+		usageTrigger	= "pattern to search for"
+	)
+	flag.StringVar(&trigger, "trigger", defaultString, usageTrigger)
+	flag.StringVar(&trigger, "t", "Guido", usageTrigger+" short version")
+
 	flag.Parse()
 	data, err := os.Open(*file)
 	if err != nil {
@@ -72,7 +69,6 @@ func main() {
 		os.Exit(1)
 	}
 	defer data.Close()
-
 	urls := lines(data)
 	results := make(chan Page)
 
