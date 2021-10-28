@@ -34,14 +34,22 @@ type Page struct {
 var file = flag.String("f", "-", "File to read")
 
 // trigger var is the string to search the response.Body for.
-var trigger = flag.String("t", "-", "Term to search for.")
- 
+var trigger string
+
+// init sets up the flag.StringVar results.
+func init() {
+	const (
+		defaultString	= "Domici"
+		usageTrigger	= "pattern to search for"
+	)
+	flag.StringVar(&trigger, "trigger", defaultString, usageTrigger)
+	flag.StringVar(&trigger, "t", "Guido", usageTrigger+" short version")
+}
+
 // hasString returns a bool, is the term string in the response body?
-func hasString(rb []byte, term *string) bool {
-	//termS := fmt.Sprintf(*term)
-	termS := *term
+func hasString(rb []byte, term string) bool {
 	b := string(rb[:len(rb)])
-	return strings.Contains(b, termS)
+	return strings.Contains(b, term)
 }
 
 // lines takes the file of URLs and returns a slice to iterate over.
@@ -66,7 +74,6 @@ func main() {
 	defer data.Close()
 
 	urls := lines(data)
-
 	results := make(chan Page)
 
 	for _, url := range urls {
