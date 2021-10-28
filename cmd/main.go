@@ -33,10 +33,15 @@ type Page struct {
 // file var is the filename to get URLs from.
 var file = flag.String("f", "-", "File to read")
 
+// trigger var is the string to search the response.Body for.
+var trigger = flag.String("t", "-", "Term to search for.")
+ 
 // hasString returns a bool, is the term string in the response body?
-func hasString(rb []byte, term string) bool {
+func hasString(rb []byte, term *string) bool {
+	//termS := fmt.Sprintf(*term)
+	termS := *term
 	b := string(rb[:len(rb)])
-	return strings.Contains(b, term)
+	return strings.Contains(b, termS)
 }
 
 // lines takes the file of URLs and returns a slice to iterate over.
@@ -90,8 +95,8 @@ func main() {
 	for range urls {
 		result := <-results
 		fmt.Printf("For %s the response was: %d", result.URL, result.Response)
-		if hasString(result.Body, "Domici") {
-			fmt.Printf(", and %s was found in the body", "Domici")
+		if hasString(result.Body, trigger) {
+			fmt.Printf(", and %s was found in the body", trigger)
 		}
 		fmt.Printf(".\n")
 	}
